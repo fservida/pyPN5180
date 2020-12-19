@@ -9,6 +9,7 @@ class PN5180:
 		self._spi.max_speed_hz = 50000
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(25, GPIO.IN)  # GPIO 25 is the Busy pin (Header 22)
+		#GPIO.setup(16, GPIO.OUT)  # GPIO 16 is "OK" led. run "echo none >/sys/class/leds/led0/trigger" as superuser to disable external triggers. Normally triggered by mmc0
 		self.__debug = debug
 		self.__protocol = protocol
 
@@ -76,6 +77,7 @@ class PN5180:
 
 		for slot_counter in range(0, 16):  # A loop that repeats 16 times since an inventory command consists of 16 time slots
 			if self._card_has_responded():  # The function CardHasResponded reads the RX_STATUS register, which indicates if a card has responded or not.
+				#GPIO.output(16, GPIO.LOW)
 				self._send([0x0A, 0x00])  # Command READ_DATA - Reads the reception Buffer
 				uid_buffer = self._read(self._bytes_in_card_buffer)  # We shall read the buffer from SPI MISO -  Everything in the reception buffer shall be saved into the UIDbuffer array.
 				# uid_buffer = self._read(255)  # We shall read the buffer from SPI MISO
@@ -88,6 +90,7 @@ class PN5180:
 			self._send([0x00, 0x03, 0xFF, 0xFF, 0x0F, 0x00])  # Clears the interrupt register IRQ_STATUS
 			self._send([0x09, 0x00])  # Send EOF
 		self._send([0x17, 0x00])  # Switch OFF RF field
+		#GPIO.output(16, GPIO.HIGH)
 		return uids
 
 	@staticmethod
