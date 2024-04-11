@@ -75,7 +75,7 @@ class PN5180:
 		self._send([0x01, 0x00, 0x03, 0x00, 0x00, 0x00])  # Activates TRANSCEIVE routine
 		self._send([0x09, 0x00, 0x06, 0x01, 0x00])  # Sends an inventory command with 16 slots
 
-		for slot_counter in range(0, 16):  # A loop that repeats 16 times since an inventory command consists of 16 time slots
+		for slot_counter in range(1, 16):  # A loop that repeats 16 times since an inventory command consists of 16 time slots
 			if self._card_has_responded():  # The function CardHasResponded reads the RX_STATUS register, which indicates if a card has responded or not.
 				#GPIO.output(16, GPIO.LOW)
 				self._send([0x0A, 0x00])  # Command READ_DATA - Reads the reception Buffer
