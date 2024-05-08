@@ -79,14 +79,15 @@ class PN5180(ABC):
 		raise NotImplementedError("Method needs to be subclassed for each protocol.")
 
 	@staticmethod
-	def _format_uid(uid):
+	def _format_uid(uid, reverse=False):
 		"""
 		Return a readable UID from a LSB byte array
 		:param uid:
 		:return:
 		"""
 		uid_readable = list(uid)  # Create a copy of the original UID array
-		#uid_readable.reverse()
+		if reverse:
+			uid_readable.reverse()
 		uid_readable = "".join([format(byte, 'x').zfill(2) for byte in uid_readable])
 		# print(f"UID: {uid_readable}")
 		return uid_readable
@@ -109,6 +110,9 @@ class PN5180(ABC):
 class ISO15693(PN5180):
 	def __init__(self, bus: int = 0, device: int = 0, debug=False):
 		super().__init__(bus, device, debug)
+
+	def _format_uid(self, uid):
+		return super()._format_uid(uid, reverse=True)
 
 	def _inventory(self):
 		"""
@@ -181,6 +185,8 @@ class ISO14443(PN5180):
 						return data[:-1]
 		raise Exception
 
+	def _format_uid(self, uid):
+		return super()._format_uid(uid)
 
 	def _inventory(self):
 		"""
