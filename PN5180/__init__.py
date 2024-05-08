@@ -1,1 +1,1 @@
-from .PN5180 import PN5180
+from .PN5180 import *
